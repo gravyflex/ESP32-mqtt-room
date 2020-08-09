@@ -1,8 +1,8 @@
 //Replace with your Wifi SSID; example: #define ssid "MyWifi"
-#define ssid "$SSID$"
+#define ssid "7HELLS"
 
 //Replace with your Wifi password; example: #define password "12345678"
-#define password "$WIFI_PASSWORD$"
+#define password ""
 
 //Replace with a human-friendly host name. Must not contain spaces or special characters and be unique on your network
 #define hostname "esp32_room_presence"

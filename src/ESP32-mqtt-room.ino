@@ -33,12 +33,17 @@ extern "C" {
 #include "BLEBeacon.h"
 #include "BLEEddystoneTLM.h"
 #include "BLEEddystoneURL.h"
-#include "Settings.h"
+#include "Settings_dev.h"
 
 #ifdef htuSensorTopic
 	#define tempTopic htuSensorTopic "/temperature"
 	#define humidityTopic htuSensorTopic "/humidity"
 	#include "sensors/sensor_htu21d.h"
+#endif
+
+#ifdef bh1750SensorTopic
+    #define luxTopic bh1750SensorTopic "/illuminance"
+    #include "sensors/sensor_bh1750.h"
 #endif
 
 static const int scanTime = singleScanTime;
@@ -118,7 +123,7 @@ void reportSensorValues() {
 		char temp[8];
 		char humidity[8];
 
-		dtostrf(getTemp(), 0, 1, temp); 						// convert float to string with one decimal place precision
+		dtostrf(getTemp(), 0, 1, temp); // convert float to string with one decimal place precision
 		dtostrf(getHumidity(), 0, 1, humidity);			// convert float to string with one decimal place precision
 
 		if (mqttClient.publish(tempTopic, 0, 0, temp) == true) {
@@ -133,7 +138,20 @@ void reportSensorValues() {
 
 #endif
 
+#ifdef bh1750SensorTopic
+void reportBh1750SensorValues() {
+	if (bh1750SensorIsConnected()) {
+		char lx[8];
 
+		dtostrf(getLux());
+
+		if(mqttClient.publish(luxTopic) == true) {
+			Serial.printf("Lux %s sent\n\r", lx);
+		}
+	}
+}
+
+#endif
 bool sendTelemetry(int deviceCount = -1, int reportCount = -1) {
 	StaticJsonDocument<256> tele;
 	tele["room"] = room;
